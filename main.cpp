@@ -21,6 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
 	win->CreateGameWindow();
+	
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -61,6 +62,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene = new GameScene();
 	gameScene->Initialize();
 
+	enum Scene {
+		TITLE,
+		MANUAL,
+		PLAY,
+		CLEAR
+	};
+
+	int scene = 0;
+
 	// メインループ
 	while (true) {
 		// メッセージ処理
@@ -68,23 +78,89 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
+		//フルスクリーン設定
+		win->SetFullscreen(true);
+		
+		// ---------------更新処理--------------- //
 		// 入力関連の毎フレーム処理
 		input->Update();
-		// ゲームシーンの毎フレーム処理
+
+		////シーン遷移処理
+		//switch (scene) {
+
+		//	case TITLE:
+		//		// タイトルシーンの毎フレーム更新
+		//		if (input->TriggerKey(DIK_SPACE))
+		//		{
+		//			scene = MANUAL;
+		//		}
+		//		break;
+		//	case MANUAL:
+		//		// マニュアルシーンの毎フレーム処理
+		//		if (input->TriggerKey(DIK_SPACE))
+		//		{
+		//			scene = PLAY;
+		//		}
+		//		break;
+		//	case PLAY:
+		//		// ゲームシーンの毎フレーム処理
+		//		gameScene->Update();
+		//		break;
+		//	case CLEAR:
+		//		// クリアシーンの毎フレーム処理
+
+		//		break;
+		//}
+
+		//ゲームシーンの毎フレーム処理
 		gameScene->Update();
+
 		// 軸表示の更新
 		axisIndicator->Update();
 
+		// ---------------描画処理--------------- //
 		// 描画開始
 		dxCommon->PreDraw();
-		// ゲームシーンの描画
+		//switch (scene) {
+
+		//	case TITLE:
+		//		// タイトルシーンの描画
+		//		debugText->SetPos(50, 150);
+		//		debugText->Printf("scene:(%d)",scene);
+
+		//		break;
+		//	case MANUAL:
+		//		// マニュアルシーンの描画
+		//		debugText->SetPos(50, 150);
+		//		debugText->Printf("scene:(%d)", scene);
+
+		//		break;
+		//	case PLAY:
+		//		// ゲームシーンの描画
+		//		debugText->SetPos(50, 150);
+		//		debugText->Printf("scene:(%d)", scene);
+
+		//		break;
+		//	case CLEAR:
+		//		// クリアシーンの描画
+
+		//		break;
+
+		//}
+		 
 		gameScene->Draw();
+
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 		// 描画終了
 		dxCommon->PostDraw();
+
+		// ESCキーが押されたらループから抜ける
+		if (input->TriggerKey(DIK_ESCAPE) == 1) {
+			break;
+		}
 	}
 
 	// 各種解放
